@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Uutiskooste</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Sallitut lahteet, neutraali kooste</p>
+          <h1>Uutiskooste</h1>
+        </div>
+        <button id="refreshButton" class="primary-action" type="button">Laadi uutiskooste</button>
+      </header>
+
+      <section class="controls" aria-label="Asetukset">
+        <fieldset>
+          <legend>Alueet</legend>
+          <div id="areaControls" class="check-grid"></div>
+        </fieldset>
+
+        <label>
+          Uutisia per alue
+          <select id="maxPerArea">
+            <option value="5" selected>5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+        </label>
+
+        <label>
+          Tila
+          <select id="summaryMode">
+            <option value="compact" selected>Erittäin tiivis</option>
+            <option value="wide">Laajempi</option>
+          </select>
+        </label>
+
+        <label>
+          Aikarajaus
+          <select id="timeLimit">
+            <option value="12">12 tuntia</option>
+            <option value="24" selected>24 tuntia</option>
+            <option value="48">48 tuntia</option>
+            <option value="72">3 päivää</option>
+            <option value="120">5 päivää</option>
+            <option value="168">7 päivää</option>
+          </select>
+        </label>
+
+        <label>
+          Kieli
+          <select id="language">
+            <option value="fi" selected>Suomi</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+
+        <div class="toggle-row">
+          <label><input id="showLinks" type="checkbox" checked> Linkit</label>
+          <label><input id="showTime" type="checkbox" checked> Julkaisuaika</label>
+        </div>
+      </section>
+
+      <section class="status-panel" aria-live="polite">
+        <div id="loadingState" class="loading" hidden>
+          <span class="spinner"></span>
+          <span>Haetaan uutisia sallituista lähteistä...</span>
+        </div>
+        <div id="metaState" class="meta-state">Valmis hakemaan koosteen.</div>
+      </section>
+
+      <section class="actions" aria-label="Vienti">
+        <button id="copyButton" type="button" disabled>Kopioi kooste</button>
+        <button id="downloadMarkdownButton" type="button" disabled>Vie Markdown</button>
+        <button id="downloadTextButton" type="button" disabled>Vie tekstitiedosto</button>
+        <button id="downloadHtmlButton" type="button" disabled>Vie HTML</button>
+      </section>
+
+      <section id="sectionJumpPanel" class="section-jump-panel" aria-label="Siirry uutisalueeseen" hidden></section>
+
+      <article id="digest" class="digest" aria-label="Uutiskooste">
+        <div class="empty-state">
+          <h2>Kooste ilmestyy tähän</h2>
+          <p>Paina ylhäällä olevaa painiketta, niin sovellus hakee uusimmat hyväksyttävät uutiset määritellyistä lähteistä.</p>
+        </div>
+      </article>
+
+      <section id="warnings" class="warnings" hidden></section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

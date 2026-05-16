@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "functions": {
+    "api/digest.js": {
+      "maxDuration": 30
+    },
+    "api/sources.js": {
+      "maxDuration": 10
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    }
+  ]
+}
