@@ -76,3 +76,5 @@ Avaa osoite iPadin Safarissa. Voit lisätä sen kotinäytölle valitsemalla Shar
 ## Huomio
 
 Vercel Functions -ympäristössä pitkä uutishaku voi aikakatkaista, jos moni lähde hidastelee yhtä aikaa. Sovellus jättää yksittäisiä epäonnistuvia lähteitä pois ja näyttää puutteet koosteen lopussa.
+
+Valokuvausosio painottaa näyttelyitä, kilpailuja, valokuvaajaprojekteja, kuvajournalismia ja kuvakulttuuria ennen teknisiä kamera- ja objektiiviuutisia.
