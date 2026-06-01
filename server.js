@@ -3,7 +3,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { URL } = require("node:url");
 const { AREAS, SOURCES } = require("./lib/sources");
-const { buildDigest, cleanError, parseOptions } = require("./lib/digest");
+const { buildDigest, checkSourceHealth, cleanError, parseOptions } = require("./lib/digest");
 
 const PORT = Number(process.env.PORT || 4174);
 const HOST = process.env.HOST || "127.0.0.1";
@@ -52,6 +52,26 @@ function serveStatic(req, res) {
   });
 }
 
+function readJsonBody(req) {
+  return new Promise((resolve) => {
+    const chunks = [];
+    req.on("data", (chunk) => chunks.push(chunk));
+    req.on("end", () => {
+      if (chunks.length === 0) {
+        resolve({});
+        return;
+      }
+
+      try {
+        resolve(JSON.parse(Buffer.concat(chunks).toString("utf8")));
+      } catch {
+        resolve({});
+      }
+    });
+    req.on("error", () => resolve({}));
+  });
+}
+
 async function handleApi(req, res) {
   const pathname = new URL(req.url, `http://${req.headers.host}`).pathname;
 
@@ -63,11 +83,32 @@ async function handleApi(req, res) {
   if (pathname === "/api/digest") {
     try {
       const options = parseOptions(req.url);
-      const digest = await buildDigest(options);
+      const body = req.method === "POST" ? await readJsonBody(req) : {};
+      const digest = await buildDigest(options, body.customSources || []);
       sendJson(res, 200, digest);
     } catch (error) {
       sendJson(res, 500, {
         error: "Koosteen laatiminen epaonnistui.",
+        detail: cleanError(error.message)
+      });
+    }
+    return;
+  }
+
+  if (pathname === "/api/source-health") {
+    if (req.method !== "POST") {
+      sendJson(res, 405, { error: "Method not allowed" });
+      return;
+    }
+
+    try {
+      const options = parseOptions(req.url);
+      const body = await readJsonBody(req);
+      const report = await checkSourceHealth(options, body.customSources || []);
+      sendJson(res, 200, report);
+    } catch (error) {
+      sendJson(res, 500, {
+        error: "Lähteiden tarkistus epäonnistui.",
         detail: cleanError(error.message)
       });
     }

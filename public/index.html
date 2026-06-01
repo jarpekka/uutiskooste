@@ -67,6 +67,53 @@
         </div>
       </section>
 
+      <section class="source-panel" aria-label="Lähteiden hallinta">
+        <div class="panel-heading">
+          <div>
+            <h2>Lähteet</h2>
+            <p id="sourceSummary" class="panel-note">Ladataan lähteitä...</p>
+          </div>
+          <button id="checkSourcesButton" type="button">Tarkista lähteet</button>
+        </div>
+
+        <details>
+          <summary>Lisää oma lähde</summary>
+          <form id="customSourceForm" class="source-form">
+            <label>
+              Nimi
+              <input id="customSourceName" type="text" autocomplete="off" placeholder="Esim. British Journal of Photography">
+            </label>
+            <label>
+              Uutisalue
+              <select id="customSourceArea"></select>
+            </label>
+            <label>
+              RSS-syöte
+              <input id="customSourceFeed" type="url" autocomplete="off" placeholder="https://example.com/feed/">
+            </label>
+            <label>
+              Sivusto
+              <input id="customSourceSite" type="url" autocomplete="off" placeholder="https://example.com">
+            </label>
+            <label>
+              Kieli
+              <select id="customSourceLanguage">
+                <option value="fi">Suomi</option>
+                <option value="en" selected>English</option>
+              </select>
+            </label>
+            <label>
+              Avainsanat
+              <input id="customSourceKeywords" type="text" autocomplete="off" placeholder="näyttely, kilpailu, valokuvaus">
+            </label>
+            <button type="submit">Lisää lähde</button>
+          </form>
+        </details>
+
+        <div id="customSourcesList" class="custom-sources"></div>
+        <div id="sourceHealthReport" class="source-health" hidden></div>
+      </section>
+
       <section class="status-panel" aria-live="polite">
         <div id="loadingState" class="loading" hidden>
           <span class="spinner"></span>
@@ -94,7 +141,7 @@
       <section id="warnings" class="warnings" hidden></section>
 
       <footer class="app-footer">
-        Updated: 17.5.2026
+        Updated: 31.5.2026
       </footer>
     </main>
 

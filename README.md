@@ -31,6 +31,10 @@ server.js         kevyt paikallinen kehityspalvelin
 vercel.json       Vercel-asetukset
 ```
 
+## Lähteiden hallinta
+
+Sovellus näyttää peruslähteiden määrän, sallii käyttäjän lisätä omia RSS-lähteitä selaimen muistiin ja lähettää ne mukaan uutishakuun. Lähteet voi tarkistaa painikkeella, joka raportoi löytyneet uutiset, hyväksytyt uutiset ja mahdolliset hakuvirheet.
+
 ## Deploy Verceliin GitHubin kautta
 
 1. Luo uusi GitHub-repositorio.
