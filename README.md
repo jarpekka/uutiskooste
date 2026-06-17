@@ -35,7 +35,7 @@ vercel.json       Vercel-asetukset
 
 Sovellus näyttää peruslähteiden määrän, sallii käyttäjän lisätä omia RSS-lähteitä selaimen muistiin ja lähettää ne mukaan uutishakuun. Lähteet voi tarkistaa painikkeella, joka raportoi löytyneet uutiset, hyväksytyt uutiset ja mahdolliset hakuvirheet.
 
-Tukholma-osio käyttää matkailu- ja kaupunkisisältöihin painotettuja lähteitä, kuten Visit Stockholmia, Time Out Stockholmia, Visit Swedeniä, View Stockholmia ja Your Living Cityä.
+Tukholma-osio käyttää matkailu-, tapahtuma- ja kaupunkisisältöihin painotettuja lähteitä, kuten Visit Stockholmia, Time Out Stockholmia, Visit Swedeniä, View Stockholmia, Your Living Cityä, SOMOa, Konserthusetia, Debaseria, Faschingia ja Stadsmuseetia.
 
 ## Deploy Verceliin GitHubin kautta
 
