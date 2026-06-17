@@ -1,4 +1,5 @@
 const areaControls = document.querySelector("#areaControls");
+const resetAreasButton = document.querySelector("#resetAreasButton");
 const refreshButton = document.querySelector("#refreshButton");
 const copyButton = document.querySelector("#copyButton");
 const downloadMarkdownButton = document.querySelector("#downloadMarkdownButton");
@@ -148,6 +149,13 @@ function getOptions() {
     links: showLinks.checked ? "true" : "false",
     time: showTime.checked ? "true" : "false"
   });
+}
+
+function resetAreaSelections() {
+  for (const input of areaControls.querySelectorAll("input[type='checkbox']")) {
+    input.checked = false;
+  }
+  metaState.textContent = "Uutisalueiden valinnat nollattu.";
 }
 
 async function fetchDigest() {
@@ -457,6 +465,7 @@ function formatLocalDate(iso) {
 }
 
 refreshButton.addEventListener("click", fetchDigest);
+resetAreasButton.addEventListener("click", resetAreaSelections);
 checkSourcesButton.addEventListener("click", checkSources);
 customSourceForm.addEventListener("submit", handleCustomSourceSubmit);
 copyButton.addEventListener("click", copyDigest);
