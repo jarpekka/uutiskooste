@@ -84,7 +84,7 @@ async function handleApi(req, res) {
     try {
       const options = parseOptions(req.url);
       const body = req.method === "POST" ? await readJsonBody(req) : {};
-      const digest = await buildDigest(options, body.customSources || []);
+      const digest = await buildDigest(options, body.customSources || [], body.preferences || {});
       sendJson(res, 200, digest);
     } catch (error) {
       sendJson(res, 500, {

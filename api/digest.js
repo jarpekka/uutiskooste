@@ -33,7 +33,7 @@ module.exports = async function handler(req, res) {
   try {
     const options = parseOptions(req.url);
     const body = req.method === "POST" ? await readJsonBody(req) : {};
-    const digest = await buildDigest(options, body.customSources || []);
+    const digest = await buildDigest(options, body.customSources || [], body.preferences || {});
     res.status(200).json(digest);
   } catch (error) {
     res.status(500).json({

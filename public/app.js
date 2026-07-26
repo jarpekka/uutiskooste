@@ -27,12 +27,19 @@ const customSourceLanguage = document.querySelector("#customSourceLanguage");
 const customSourceKeywords = document.querySelector("#customSourceKeywords");
 const customSourcesList = document.querySelector("#customSourcesList");
 const sourceHealthReport = document.querySelector("#sourceHealthReport");
+const preferenceForm = document.querySelector("#preferenceForm");
+const likedTermsInput = document.querySelector("#likedTerms");
+const dislikedTermsInput = document.querySelector("#dislikedTerms");
+const preferenceSummary = document.querySelector("#preferenceSummary");
+const resetPreferencesButton = document.querySelector("#resetPreferencesButton");
 
 const CUSTOM_SOURCES_KEY = "uutiskooste.customSources.v1";
+const PREFERENCES_KEY = "uutiskooste.preferences.v1";
 let currentDigest = null;
 let knownAreas = [];
 let knownSources = [];
 let customSources = loadCustomSources();
+let preferences = loadPreferences();
 
 init();
 
@@ -42,13 +49,77 @@ async function init() {
     const data = await response.json();
     knownAreas = data.areas;
     knownSources = data.sources;
+    const knownAreaIds = new Set(knownAreas.map((area) => area.id));
+    const validCustomSources = customSources.filter((source) => knownAreaIds.has(source.area));
+    if (validCustomSources.length !== customSources.length) {
+      customSources = validCustomSources;
+      localStorage.setItem(CUSTOM_SOURCES_KEY, JSON.stringify(customSources));
+    }
     renderAreaControls(knownAreas);
     renderCustomAreaOptions(knownAreas);
     renderSourceSummary();
     renderCustomSources();
+    renderPreferences();
   } catch (error) {
     metaState.textContent = "Lähdelistan lataus epäonnistui.";
   }
+}
+
+function splitPreferenceTerms(value) {
+  return Array.from(
+    new Set(
+      String(value || "")
+        .split(",")
+        .map((term) => term.trim())
+        .filter(Boolean)
+        .slice(0, 40)
+    )
+  );
+}
+
+function loadPreferences() {
+  const empty = { likedTerms: [], dislikedTerms: [], likedTitles: [], dislikedTitles: [] };
+  try {
+    const parsed = JSON.parse(localStorage.getItem(PREFERENCES_KEY) || "{}");
+    return {
+      likedTerms: Array.isArray(parsed.likedTerms) ? parsed.likedTerms.slice(0, 40) : [],
+      dislikedTerms: Array.isArray(parsed.dislikedTerms) ? parsed.dislikedTerms.slice(0, 40) : [],
+      likedTitles: Array.isArray(parsed.likedTitles) ? parsed.likedTitles.slice(0, 30) : [],
+      dislikedTitles: Array.isArray(parsed.dislikedTitles) ? parsed.dislikedTitles.slice(0, 30) : []
+    };
+  } catch {
+    return empty;
+  }
+}
+
+function savePreferences() {
+  localStorage.setItem(PREFERENCES_KEY, JSON.stringify(preferences));
+  renderPreferences();
+}
+
+function renderPreferences() {
+  likedTermsInput.value = preferences.likedTerms.join(", ");
+  dislikedTermsInput.value = preferences.dislikedTerms.join(", ");
+  const termCount = preferences.likedTerms.length + preferences.dislikedTerms.length;
+  const feedbackCount = preferences.likedTitles.length + preferences.dislikedTitles.length;
+  preferenceSummary.textContent =
+    termCount || feedbackCount
+      ? `Aiheita ${termCount}. Uutispalautteita ${feedbackCount}.`
+      : "Ei tallennettuja kiinnostuksenkohteita.";
+}
+
+function handlePreferenceSubmit(event) {
+  event.preventDefault();
+  preferences.likedTerms = splitPreferenceTerms(likedTermsInput.value);
+  preferences.dislikedTerms = splitPreferenceTerms(dislikedTermsInput.value);
+  savePreferences();
+  metaState.textContent = "Kiinnostusprofiili tallennettu. Se vaikuttaa seuraavaan koosteeseen.";
+}
+
+function resetPreferences() {
+  preferences = { likedTerms: [], dislikedTerms: [], likedTitles: [], dislikedTitles: [] };
+  savePreferences();
+  metaState.textContent = "Kiinnostusprofiili tyhjennetty.";
 }
 
 function renderAreaControls(areas) {
@@ -170,7 +241,7 @@ async function fetchDigest() {
     const response = await fetch(`/api/digest?${params.toString()}`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ customSources })
+      body: JSON.stringify({ customSources, preferences })
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Tuntematon virhe");
@@ -293,6 +364,44 @@ function renderSourceHealth(data) {
   sourceHealthReport.append(table);
 }
 
+function updateTitleFeedback(item, direction) {
+  const targetKey = direction === "like" ? "likedTitles" : "dislikedTitles";
+  const oppositeKey = direction === "like" ? "dislikedTitles" : "likedTitles";
+  const isActive = preferences[targetKey].includes(item.title);
+  preferences[targetKey] = isActive
+    ? preferences[targetKey].filter((title) => title !== item.title)
+    : [item.title, ...preferences[targetKey].filter((title) => title !== item.title)].slice(0, 30);
+  preferences[oppositeKey] = preferences[oppositeKey].filter((title) => title !== item.title);
+  savePreferences();
+  if (currentDigest) renderDigest(currentDigest);
+  metaState.textContent = isActive
+    ? "Uutispalaute poistettu."
+    : "Uutispalaute tallennettu. Se vaikuttaa seuraavaan koosteeseen.";
+}
+
+function createFeedbackControls(item) {
+  const controls = document.createElement("div");
+  controls.className = "item-feedback";
+  controls.setAttribute("aria-label", "Uutispalaute");
+
+  const moreButton = document.createElement("button");
+  moreButton.type = "button";
+  moreButton.className = "feedback-action";
+  moreButton.textContent = "Enemmän tällaisia";
+  moreButton.setAttribute("aria-pressed", String(preferences.likedTitles.includes(item.title)));
+  moreButton.addEventListener("click", () => updateTitleFeedback(item, "like"));
+
+  const lessButton = document.createElement("button");
+  lessButton.type = "button";
+  lessButton.className = "feedback-action";
+  lessButton.textContent = "Vähemmän tällaisia";
+  lessButton.setAttribute("aria-pressed", String(preferences.dislikedTitles.includes(item.title)));
+  lessButton.addEventListener("click", () => updateTitleFeedback(item, "dislike"));
+
+  controls.append(moreButton, lessButton);
+  return controls;
+}
+
 function renderDigest(data) {
   digestElement.innerHTML = "";
   renderSectionJumpPanel(data.sections);
@@ -322,7 +431,14 @@ function renderDigest(data) {
 
       const title = document.createElement("div");
       title.className = "item-title";
-      title.textContent = item.title;
+      if (item.discovery) {
+        const badge = document.createElement("span");
+        badge.className = "discovery-badge";
+        badge.textContent = "Löytö";
+        title.append(badge, document.createTextNode(item.title));
+      } else {
+        title.textContent = item.title;
+      }
 
       const meta = document.createElement("div");
       meta.className = "item-meta";
@@ -343,6 +459,8 @@ function renderDigest(data) {
         link.textContent = item.link;
         li.append(link);
       }
+
+      li.append(createFeedbackControls(item));
 
       list.append(li);
     }
@@ -447,12 +565,14 @@ function downloadFile(filename, contents, type) {
 
 function digestHtml() {
   if (!currentDigest) return "";
+  const exportedDigest = digestElement.cloneNode(true);
+  for (const controls of exportedDigest.querySelectorAll(".item-feedback")) controls.remove();
   return `<!doctype html>
 <html lang="${currentDigest.options.language}">
 <meta charset="utf-8">
 <title>Uutiskooste</title>
 <body>
-${digestElement.innerHTML}
+${exportedDigest.innerHTML}
 </body>
 </html>`;
 }
@@ -468,6 +588,8 @@ refreshButton.addEventListener("click", fetchDigest);
 resetAreasButton.addEventListener("click", resetAreaSelections);
 checkSourcesButton.addEventListener("click", checkSources);
 customSourceForm.addEventListener("submit", handleCustomSourceSubmit);
+preferenceForm.addEventListener("submit", handlePreferenceSubmit);
+resetPreferencesButton.addEventListener("click", resetPreferences);
 copyButton.addEventListener("click", copyDigest);
 downloadMarkdownButton.addEventListener("click", () => {
   if (currentDigest) downloadFile("uutiskooste.md", currentDigest.markdown, "text/markdown;charset=utf-8");

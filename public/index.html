@@ -69,6 +69,27 @@
         </div>
       </section>
 
+      <section class="preference-panel" aria-label="Kiinnostusprofiili">
+        <div class="panel-heading">
+          <div>
+            <h2>Kiinnostusprofiili</h2>
+            <p id="preferenceSummary" class="panel-note">Ei tallennettuja kiinnostuksenkohteita.</p>
+          </div>
+          <button id="resetPreferencesButton" type="button">Tyhjennä</button>
+        </div>
+        <form id="preferenceForm" class="preference-form">
+          <label>
+            Kiinnostaa
+            <input id="likedTerms" type="text" autocomplete="off" placeholder="esim. valokuvanäyttelyt, Bruce Springsteen, luontokuvaus">
+          </label>
+          <label>
+            Vähemmän näitä
+            <input id="dislikedTerms" type="text" autocomplete="off" placeholder="esim. kameratekniikka, julkkisuutiset">
+          </label>
+          <button type="submit">Tallenna profiili</button>
+        </form>
+      </section>
+
       <section class="source-panel" aria-label="Lähteiden hallinta">
         <div class="panel-heading">
           <div>
@@ -143,7 +164,7 @@
       <section id="warnings" class="warnings" hidden></section>
 
       <footer class="app-footer">
-        Updated: 17.6.2026 / 3
+        Updated: 26.7.2026 / 3
       </footer>
     </main>
 

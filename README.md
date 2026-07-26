@@ -35,7 +35,21 @@ vercel.json       Vercel-asetukset
 
 Sovellus näyttää peruslähteiden määrän, sallii käyttäjän lisätä omia RSS-lähteitä selaimen muistiin ja lähettää ne mukaan uutishakuun. Lähteet voi tarkistaa painikkeella, joka raportoi löytyneet uutiset, hyväksytyt uutiset ja mahdolliset hakuvirheet.
 
-Tukholma-osio käyttää matkailu-, tapahtuma- ja kaupunkisisältöihin painotettuja lähteitä, kuten Visit Stockholmia, Time Out Stockholmia, Visit Swedeniä, View Stockholmia, Your Living Cityä, SOMOa, Konserthusetia, Debaseria, Faschingia ja Stadsmuseetia.
+## Uutisten tunnistus ja valinta
+
+Sovellus lukee RSS- ja Atom-syötteiden lisäksi sivujen rakenteisia NewsArticle- ja Article-tietoja. Puutteellisten ehdokkaiden artikkelisivuilta täydennetään rajatusti julkaisuaika, osasto ja tiivistelmäteksti. Julkaisuaikaa vailla oleva tavallinen uutinen jätetään aikarajauksessa pois, ellei lähde ole erikseen määritelty ajantasaiseksi katalogisivuksi.
+
+Uutisten järjestys perustuu aiheosuvuuteen, tuoreuteen, sisältölaatuun, lähteen laatuun ja aluekohtaisiin kiinnostavuussignaaleihin. Lopullinen valinta vähentää keskenään hyvin samankaltaisten juttujen sekä saman lähteen toistoa.
+
+## Kiinnostusprofiili
+
+Käyttäjä voi tallentaa kiinnostavia ja vähemmän kiinnostavia aiheita sekä antaa yksittäisille uutisille palautetta. Profiili säilyy vain selaimen localStoragessa ja lähetetään palvelimelle uutishaun ajaksi. Personointi muuttaa uutisten järjestystä, mutta ei poista vältettäviä aiheita ehdottomasti. Kun vaihtoehtoja on riittävästi, kuhunkin personoituun osioon varataan yksi Löytö profiilin ulkopuolelta.
+
+## Testit
+
+```bash
+npm test
+```
 
 ## Deploy Verceliin GitHubin kautta
 

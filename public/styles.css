@@ -112,6 +112,7 @@ button:disabled {
 .actions,
 .status-panel,
 .source-panel,
+.preference-panel,
 .warnings,
 .digest {
   background: var(--panel);
@@ -187,12 +188,14 @@ select {
 .status-panel,
 .actions,
 .source-panel,
+.preference-panel,
 .warnings,
 .digest {
   margin-top: 14px;
 }
 
-.source-panel {
+.source-panel,
+.preference-panel {
   padding: 16px;
 }
 
@@ -231,6 +234,29 @@ summary {
   gap: 12px;
   align-items: end;
   margin-top: 12px;
+}
+
+.preference-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr)) auto;
+  gap: 12px;
+  align-items: end;
+  margin-top: 14px;
+}
+
+.preference-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.preference-form input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+  color: var(--ink);
+  padding: 8px 10px;
 }
 
 .source-form label {
@@ -460,6 +486,22 @@ summary {
   font-weight: 780;
 }
 
+.discovery-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  margin-right: 8px;
+  border: 1px solid #a86f20;
+  border-radius: 6px;
+  background: #fff5df;
+  color: #74470f;
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1;
+  padding: 4px 7px;
+  vertical-align: 1px;
+}
+
 .item-meta {
   color: var(--muted);
   font-size: 0.92rem;
@@ -477,6 +519,27 @@ summary {
   overflow-wrap: anywhere;
 }
 
+.item-feedback {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.feedback-action {
+  min-height: 34px;
+  padding: 5px 9px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 720;
+}
+
+.feedback-action[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: #e9f5f1;
+  color: var(--accent-dark);
+}
+
 .no-news {
   color: var(--muted);
 }
@@ -488,6 +551,14 @@ summary {
 
   .source-form {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .preference-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .preference-form button {
+    grid-column: 1 / -1;
   }
 }
 
@@ -516,6 +587,14 @@ summary {
 
   .source-form {
     grid-template-columns: 1fr;
+  }
+
+  .preference-form {
+    grid-template-columns: 1fr;
+  }
+
+  .preference-form button {
+    grid-column: auto;
   }
 
   .check-grid {
